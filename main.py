@@ -1,14 +1,18 @@
-from fastmcp import FastMCP
 import os
 import sqlite3
+from pathlib import Path
+from fastmcp import FastMCP
+DB_PATH = Path(
+    os.getenv("EXPENSES_DB_PATH", "/tmp/expenses.db")
+)
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "expenses.db")
+DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+
 CATEGORIES_PATH = os.path.join(os.path.dirname(__file__), "categories.json")
-
 mcp = FastMCP("ExpenseTracker")
 
 def init_db():
-    with sqlite3.connect(DB_PATH) as c:
+    with sqlite3.connect(str(DB_PATH)) as c:
         c.execute("""
             CREATE TABLE IF NOT EXISTS expenses(
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
